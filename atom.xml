@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Foreman rEx]]></title>
+  <link href="http://inecas.github.io/atom.xml" rel="self"/>
+  <link href="http://inecas.github.io/"/>
+  <updated>2015-04-07T21:08:27+02:00</updated>
+  <id>http://inecas.github.io/</id>
+  <author>
+    <name><![CDATA[]]></name>
+    
+  </author>
+
+  
+</feed>
