@@ -81,6 +81,23 @@
 </li>
 <li>
 <a href="#design">Design</a>
+<ul>
+<li>
+<a href="#ssh-single-host-push">Ssh Single Host Push</a>
+</li>
+<li>
+<a href="#ssh-single-host-pull">Ssh Single Host Pull</a>
+</li>
+<li>
+<a href="#ssh-multi-host">Ssh Multi Host</a>
+</li>
+<li>
+<a href="#mcollective-single-host">MCollective Single Host</a>
+</li>
+<li>
+<a href="#ansible-single-host">Ansible Single Host</a>
+</li>
+</ul>
 </li>
 </ul>
 </li>
@@ -190,7 +207,277 @@
 
 <h2 id="user-stories">User Stories</h2>
 
+<ul>
+<li><p>As a user I want to run commands in parallel across large number of
+hosts</p></li>
+<li><p>As a user I want to run commands on a host in a different network
+segment (the host doesn&#39;t see the Foreman server/the Foreman server
+doesn&#39;t see the host directly)</p></li>
+<li><p>As a user I want to manage a host without installing an agent on it
+(just plain old ssh)</p></li>
+<li><p>As a community user I want to already existing remote execution
+technologies in combination with the Foreman</p></li>
+</ul>
+
 <h2 id="design">Design</h2>
+
+<h3 id="ssh-single-host-push">Ssh Single Host Push</h3>
+
+<p><img src='/foreman-rex//images/plantuml/16aebbe8eb0ca9ed26fbd3ea2a7cb704.png'></p>
+
+<p>UserCommand:</p>
+
+<ul>
+<li>hosts: [host.example.com]</li>
+<li>template: install-packages-ssh</li>
+<li>input: { packages: [&#39;vim-X11&#39;] }</li>
+</ul>
+
+<p>ProxyCommand:</p>
+
+<ul>
+<li>host: host.example.com</li>
+<li>provider: ssh</li>
+<li>input: &quot;yum install -y vim-X11&quot;</li>
+</ul>
+
+<p>SshCommand:</p>
+
+<ul>
+<li>host: host.example.com</li>
+<li>input: &quot;yum install -y vim-X11&quot;</li>
+</ul>
+
+<p>ProgressReport[1, Running]:</p>
+
+<ul>
+<li>output: &quot;Resolving depednencies&quot;</li>
+</ul>
+
+<p>ProgressReport[2, Running]:</p>
+
+<ul>
+<li>output: &quot;installing libXt&quot;</li>
+</ul>
+
+<p>AccumulatedProgressReport[1, Running]:</p>
+
+<ul>
+<li>output: { stdout: &quot;Resolving depednencies\ninstalling libXt&quot; }</li>
+</ul>
+
+<p>ProgressReport[3, Running]:</p>
+
+<ul>
+<li>output: &quot;installing vim-X11&quot;</li>
+</ul>
+
+<p>ProgressReport[4, Finished]:</p>
+
+<ul>
+<li>output: &quot;operation finished successfully&quot;</li>
+<li>exit_code: 0</li>
+</ul>
+
+<p>AccumulatedProgressReport[2, Finished]:</p>
+
+<ul>
+<li>output: { stdout: &quot;installing vim-X11\noperation finished successfully&quot;, exit_code: 0 }</li>
+<li>success: true</li>
+</ul>
+
+<h3 id="ssh-single-host-pull">Ssh Single Host Pull</h3>
+
+<p><img src='/foreman-rex//images/plantuml/40c71a2b081db9c25ff88fda3fb8485d.png'></p>
+
+<p>UserCommand:</p>
+
+<ul>
+<li>hosts: [host.example.com]</li>
+<li>template: install-packages-ssh</li>
+<li>input: { packages: [&#39;vim-X11&#39;] }</li>
+</ul>
+
+<p>ProxyCommand:</p>
+
+<ul>
+<li>host: host.example.com</li>
+<li>provider: ssh</li>
+<li>input: &quot;yum install -y vim-X11&quot;</li>
+</ul>
+
+<p>Script:</p>
+
+<ul>
+<li>input: &quot;yum install -y vim-X11&quot;</li>
+</ul>
+
+<p>ProgressReport[1, Running]:</p>
+
+<ul>
+<li>output: &quot;Resolving depednencies&quot;</li>
+</ul>
+
+<p>ProgressReport[2, Running]:</p>
+
+<ul>
+<li>output: &quot;installing libXt&quot;</li>
+</ul>
+
+<p>AccumulatedProgressReport[1, Running]:</p>
+
+<ul>
+<li>output: { stdout: &quot;Resolving depednencies\ninstalling libXt&quot; }</li>
+</ul>
+
+<p>ProgressReport[3, Running]:</p>
+
+<ul>
+<li>output: &quot;installing vim-X11&quot;</li>
+</ul>
+
+<p>ProgressReport[4, Finished]:</p>
+
+<ul>
+<li>output: &quot;operation finished successfully&quot;</li>
+<li>exit_code: 0</li>
+</ul>
+
+<p>AccumulatedProgressReport[2, Finished]:</p>
+
+<ul>
+<li>output: { stdout: &quot;Resolving depednencies\ninstalling libXt&quot;, exit_code: 0 }</li>
+<li>success: true</li>
+</ul>
+
+<h3 id="ssh-multi-host">Ssh Multi Host</h3>
+
+<p><img src='/foreman-rex//images/plantuml/df6507a5cb7e9f9fe4203669e758a918.png'></p>
+
+<p>UserCommand:</p>
+
+<ul>
+<li>hosts: *.example.com</li>
+<li>template: install-packages-ssh</li>
+<li>input: { packages: [&#39;vim-X11&#39;] }</li>
+</ul>
+
+<p>ProxyCommand[host1]:</p>
+
+<ul>
+<li>host: host-1.example.com</li>
+<li>provider: ssh</li>
+<li>input: &quot;yum install -y vim-X11&quot;</li>
+</ul>
+
+<p>ProxyCommand[host2]:</p>
+
+<ul>
+<li>host: host-2.example.com</li>
+<li>provider: ssh</li>
+<li>input: &quot;yum install -y vim-X11&quot;</li>
+</ul>
+
+<div class=" alert alert-info">
+  <p><strong>Note</strong> </p>
+
+<p>we might want to optimize the communication between server and
+the proxy (sending collection of ProxyCommands in bulk, as well as
+the AccumulatedProgerssReports). That would could also be utilized
+by the Ansible implementation, where there might be optimization
+on the invoking the ansible commands at once (the same might apply
+to mcollective). On the other hand, this is more an optimization,
+not required to be implemented from the day one: but it&#39;s good to have
+this in mind</p>
+
+</div>
+
+<h3 id="mcollective-single-host">MCollective Single Host</h3>
+
+<p><img src='/foreman-rex//images/plantuml/3d6f85d2d931ded5ecae64f2bc89c11a.png'></p>
+
+<p>UserCommand:</p>
+
+<ul>
+<li>hosts: [host.example.com]</li>
+<li>template: install-packages-mco</li>
+<li>input: { packages: [&#39;vim-X11&#39;] }</li>
+</ul>
+
+<p>ProxyCommand:</p>
+
+<ul>
+<li>host: host.example.com</li>
+<li>provider: mcollective</li>
+<li>input: { agent: package, args: { package =&gt; &#39;vim-X11&#39; } }</li>
+</ul>
+
+<p>MCOCommand:</p>
+
+<ul>
+<li>host: host.example.com</li>
+<li>input: { agent: package, args: { package =&gt; &#39;vim-X11&#39; } }</li>
+</ul>
+
+<p>ProgressReport[Finished]:</p>
+
+<ul>
+<li>output: [ {&quot;name&quot;:&quot;vim-X11&quot;,&quot;tries&quot;:1,&quot;version&quot;:&quot;7.4.160-1&quot;,&quot;status&quot;:0,&quot;release&quot;:&quot;1.el7&quot;},
+          {&quot;name&quot;:&quot;libXt&quot;,&quot;tries&quot;:1,&quot;version&quot;:&quot;1.1.4-6&quot;,&quot;status&quot;:0,&quot;release&quot;:&quot;1.el7&quot;} ]</li>
+</ul>
+
+<p>AccumulatedProgressReport[Finished]:</p>
+
+<ul>
+<li>output: [ {&quot;name&quot;:&quot;vim-X11&quot;,&quot;tries&quot;:1,&quot;version&quot;:&quot;7.4.160-1&quot;,&quot;status&quot;:0,&quot;release&quot;:&quot;1.el7&quot;},
+          {&quot;name&quot;:&quot;libXt&quot;,&quot;tries&quot;:1,&quot;version&quot;:&quot;1.1.4-6&quot;,&quot;status&quot;:0,&quot;release&quot;:&quot;1.el7&quot;} ]</li>
+<li>success: true</li>
+</ul>
+
+<h3 id="ansible-single-host">Ansible Single Host</h3>
+
+<p><img src='/foreman-rex//images/plantuml/cb5c68d0f0ff412347978b498e5673c2.png'></p>
+
+<p>UserCommand:</p>
+
+<ul>
+<li>hosts: [host.example.com]</li>
+<li>template: install-packages-ansible</li>
+<li>input: { packages: [&#39;vim-X11&#39;] }</li>
+</ul>
+
+<p>ProxyCommand:</p>
+
+<ul>
+<li>host: host.example.com</li>
+<li>provider: ansible</li>
+<li>input: { module: yum, args: { name: &#39;vim-X11&#39;, state: installed } }</li>
+</ul>
+
+<p>AnsibleCommand:</p>
+
+<ul>
+<li>host: host.example.com</li>
+<li>provider: ansible</li>
+<li>input: { module: yum, args: { name: &#39;vim-X11&#39;, state: installed } }</li>
+</ul>
+
+<p>ProgressReport[Finished]:</p>
+
+<ul>
+<li>output: { changed: true,
+          rc: 0,
+          results: [&quot;Resolving depednencies\ninstalling libXt\ninstalling vim-X11\noperation finished successfully&quot;] }</li>
+</ul>
+
+<p>AccumulatedProgressReport[Finished]:</p>
+
+<ul>
+<li>output: { changed: true,
+          rc: 0,
+          results: [&quot;Resolving depednencies\ninstalling libXt\ninstalling vim-X11\noperation finished successfully&quot;] }</li>
+<li>success: true</li>
+</ul>
 
 <h1 id="command-preparation">Command Preparation</h1>
 
