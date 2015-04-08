@@ -132,6 +132,9 @@
 <li>
 <a href="#design">Design</a>
 </li>
+<li>
+<a href="#open-questions">Open questions</a>
+</li>
 </ul>
 </li>
 <li>
@@ -495,7 +498,37 @@ this in mind</p>
 
 <h2 id="user-stories">User Stories</h2>
 
+<ul>
+<li><p>?As a user I want to be able to specify default number of tries per command. # Command preparation?</p></li>
+<li><p>?As a user I want to be able to specify default retry interval per command. # Command preparation?</p></li>
+<li><p>?As a user I want to be able to specify default splay time per command. # Command preparation?</p></li>
+<li><p>As a user I want to be able to override default values like (number of tries, retry interval, splay time, ...) when I plan an execution of command.</p></li>
+<li><p>As a user I want to be able to specify infinite number of tries (until success/cancel) when I plan an execution of command.</p></li>
+<li><p>As a user I want to be able to cancel command which hasn&#39;t been started yet.</p></li>
+<li><p>As a user I want to be able to cancel command which is in progress. # some providers might not support this? therefore next user stories</p></li>
+<li><p>As a developer I want to specify whether cancellation of running commands is possible.</p></li>
+<li><p>As a user I want to see if I&#39;m able to cancel the command.</p></li>
+<li><p>As a user I want to set timeout when I plan an execution of a command.</p></li>
+<li><p>?As a user I want to setup default timeout per command. # Command preparation?</p></li>
+<li><p>As a user I want to override default timeout when I plan an execution of command.</p></li>
+<li><p>?As a developer I want dynflow to support timeouts # unless it already supports it</p></li>
+</ul>
+
 <h2 id="design">Design</h2>
+
+<p>Class diagram of Foreman classes</p>
+
+<p><img src='/foreman-rex//images/plantuml/8f062e85192fcd61c216caf3914cd473.png'></p>
+
+<p>CommandExecution will be probably later replaced by Scheduler that
+will schedule ProxyCommands (could be responsible for batch jobs,
+retrying on failure, timeouts)</p>
+
+<h2 id="open-questions">Open questions</h2>
+
+<p>Do we need anything extra to fulfill using system facts story? MCollective e.g. can use facter on every run or use
+values stored on server (equals to facts we have in Foreman). I think we should take facts from Foreman rather
+than runtime (different result than expected when planning, performance)</p>
 
 <h1 id="reporting">Reporting</h1>
 
