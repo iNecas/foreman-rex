@@ -343,49 +343,88 @@ this in mind</p>
 
 <h2 id="user-stories">User Stories</h2>
 
+<ul>
+<li><p>?As a user I want to be able to specify default number of tries per command. # Command preparation?</p></li>
+<li><p>?As a user I want to be able to specify default retry interval per command. # Command preparation?</p></li>
+<li><p>?As a user I want to be able to specify default splay time per command. # Command preparation?</p></li>
+<li><p>?As a user I want to setup default timeout per command. # Command preparation?</p></li>
+</ul>
+
 <h2 id="design">Design</h2>
 
 <h1 id="command-invocation">Command Invocation</h1>
 
 <h2 id="user-stories">User Stories</h2>
 
-<h2 id="design">Design</h2>
-
-<h1 id="command-execution">Command Execution</h1>
-
-<h2 id="user-stories">User Stories</h2>
-
 <ul>
-<li><p>?As a user I want to be able to specify default number of tries per command. # Command preparation?</p></li>
-<li><p>?As a user I want to be able to specify default retry interval per command. # Command preparation?</p></li>
-<li><p>?As a user I want to be able to specify default splay time per command. # Command preparation?</p></li>
+<li><p>As a user when I plan a new CommandExecution I want to use an existing bookmark for specifying target hosts</p></li>
+<li><p>As a user when I plan a new CommandExecution I want to use custom scoped search syntax for specifying target hosts</p></li>
+<li><p>As a user when I plan a new CommandExecution I want to target single host</p></li>
+<li><p>As a user when I plan a new CommandExecution I want to be able to evaluate a search query to target host immediately and store this list of targets even if command is planed in future</p></li>
+<li><p>As a user when I plan a new CommandExecution I want to be able to evaluate a search query just before execution starts, if it&#39;s recurring I want new evaluation before every start</p></li>
+<li><p>As a user when I plan a new CommandExecution I want planning functionality exposed by API and available in hammer</p></li>
+<li><p>As a user I want to reuse targets of existing CommandExecution</p></li>
+<li><p>As a user I want to have UI to add specific hosts to bookmarks so I don&#39;t have to specify scoped search for it (like fqdn = a or id = 1) [low priority]</p></li>
+<li><p>As a user when I plan a new CommandExecution I want to see a warning based on status of targeted hosts (unavailable/not checking in)</p></li>
 <li><p>As a user I want to be able to override default values like (number of tries, retry interval, splay time, ...) when I plan an execution of command.</p></li>
 <li><p>As a user I want to be able to specify infinite number of tries (until success/cancel) when I plan an execution of command.</p></li>
-<li><p>As a user I want to be able to cancel command which hasn&#39;t been started yet.</p></li>
-<li><p>As a user I want to be able to cancel command which is in progress. # some providers might not support this? therefore next user stories</p></li>
-<li><p>As a developer I want to specify whether cancellation of running commands is possible.</p></li>
-<li><p>As a user I want to see if I&#39;m able to cancel the command.</p></li>
 <li><p>As a user I want to set timeout when I plan an execution of a command.</p></li>
-<li><p>?As a user I want to setup default timeout per command. # Command preparation?</p></li>
 <li><p>As a user I want to override default timeout when I plan an execution of command.</p></li>
-<li><p>?As a developer I want dynflow to support timeouts # unless it already supports it</p></li>
+</ul>
+
+<h2 id="scenarios">Scenarios</h2>
+
+<p>[ convert this to text descriptions ]</p>
+
+<ul>
+<li><p>As a user to plan a command I want to: 
+input a job name
+select targets (based on bookmarks, explicit host selection, custom query)
+select job templates that can be used for this job name and targets (host is responsible to pick the one from the list)
+fill in inputs for the selected job templates</p></li>
+<li><p>As a user I want a link in host detail page to execute a job on displayed host which pre-fills the target in command invocation form</p></li>
+<li><p>As a user I want a link in host list page that redirects me to command invocation page where I can plan job execution for targets I saw on host list page</p></li>
 </ul>
 
 <h2 id="design">Design</h2>
 
 <p>Class diagram of Foreman classes</p>
 
-<p><img src='/foreman-rex///images/plantuml/4bbaa7bb555b0c4594f6d6d15825518d.png'></p>
+<p><img src='/foreman-rex///images/plantuml/617c0bfb6db9b4ac52dcc580798d1d9d.png'></p>
 
-<p>CommandExecution will be probably later replaced by Scheduler that
+<p>Query is copied to Target, we don&#39;t want to propagate any later
+changes to Bookmark to already planned job executions.</p>
+
+<p>We can store link to original bookmark to be able to
+compare changes later.</p>
+
+<p>For JobExecution we forbid later editing of Targeting.</p>
+
+<h1 id="command-execution">Command Execution</h1>
+
+<h2 id="user-stories">User Stories</h2>
+
+<ul>
+<li><p>As a user I want to be able to cancel command which hasn&#39;t been started yet.</p></li>
+<li><p>As a user I want to be able to cancel command which is in progress. # some providers might not support this? therefore next user stories</p></li>
+<li><p>As a developer I want to specify whether cancellation of running commands is possible.</p></li>
+<li><p>As a user I want to see if I&#39;m able to cancel the command.</p></li>
+<li><p>As a user I want job execution to fail after timeout limit.</p></li>
+</ul>
+
+<h2 id="design">Design</h2>
+
+<p>Class diagram of Foreman classes</p>
+
+<p><img src='/foreman-rex///images/plantuml/a2cd4a7662164d414e8f0e4b6fd280d8.png'></p>
+
+<p>JobExecution will be probably later replaced by Scheduler that
 will schedule ProxyCommands (could be responsible for batch jobs,
 retrying on failure, timeouts)</p>
 
-<h2 id="open-questions">Open questions</h2>
+<p>We should take facts from Foreman rather gather them during runtime (different result than expected when planning, performance)</p>
 
-<p>Do we need anything extra to fulfill using system facts story? MCollective e.g. can use facter on every run or use
-values stored on server (equals to facts we have in Foreman). I think we should take facts from Foreman rather
-than runtime (different result than expected when planning, performance)</p>
+<h2 id="open-questions">Open questions</h2>
 
 <h1 id="reporting">Reporting</h1>
 
