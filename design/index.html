@@ -352,53 +352,151 @@ this in mind</p>
 
 <h2 id="design">Design</h2>
 
+<p><img src='/foreman-rex///images/plantuml/be93da05489725928bf0366658baadb6.png'></p>
+
 <h1 id="command-invocation">Command Invocation</h1>
 
 <h2 id="user-stories">User Stories</h2>
 
 <ul>
-<li><p>As a user when I plan a new CommandExecution I want to use an existing bookmark for specifying target hosts</p></li>
-<li><p>As a user when I plan a new CommandExecution I want to use custom scoped search syntax for specifying target hosts</p></li>
-<li><p>As a user when I plan a new CommandExecution I want to target single host</p></li>
-<li><p>As a user when I plan a new CommandExecution I want to be able to evaluate a search query to target host immediately and store this list of targets even if command is planed in future</p></li>
-<li><p>As a user when I plan a new CommandExecution I want to be able to evaluate a search query just before execution starts, if it&#39;s recurring I want new evaluation before every start</p></li>
-<li><p>As a user when I plan a new CommandExecution I want planning functionality exposed by API and available in hammer</p></li>
-<li><p>As a user I want to reuse targets of existing CommandExecution</p></li>
-<li><p>As a user I want to have UI to add specific hosts to bookmarks so I don&#39;t have to specify scoped search for it (like fqdn = a or id = 1) [low priority]</p></li>
-<li><p>As a user when I plan a new CommandExecution I want to see a warning based on status of targeted hosts (unavailable/not checking in)</p></li>
-<li><p>As a user I want to be able to override default values like (number of tries, retry interval, splay time, ...) when I plan an execution of command.</p></li>
-<li><p>As a user I want to be able to specify infinite number of tries (until success/cancel) when I plan an execution of command.</p></li>
-<li><p>As a user I want to set timeout when I plan an execution of a command.</p></li>
-<li><p>As a user I want to override default timeout when I plan an execution of command.</p></li>
+<li><p>As a user I would like to invoke a job on a single host</p></li>
+<li><p>As a user I would like to invoke a job on a set of hosts, based on
+search filter</p></li>
+<li><p>As a user I want to be able to reuse existing bookmarks for job
+invocation</p></li>
+<li><p>As a user, when setting a job in future, I want to decide if the
+search criteria should be evaluated now or on the execution time</p></li>
+<li><p>As a user I want to reuse the target of previous jobs for next execution</p></li>
+<li><p>As a CLI user I want to be able to invoke a job via hammer CLI</p></li>
+<li><p>As a user, I want to be able to invoke the job on a specific set of hosts
+(by using checkboxes in the hosts table)</p></li>
+<li><p>As a user, when planning future job execution, I want to see a
+warning with the info about unreachable hosts</p></li>
+<li><p>As a user I want to be able to override default values like (number
+of tries, retry interval, splay time, timeout, remote user...) when I plan an execution of command.</p></li>
 </ul>
 
 <h2 id="scenarios">Scenarios</h2>
 
-<p>[ convert this to text descriptions ]</p>
+<p><strong>Fill in template inputs for a job</strong></p>
+
+<ol>
+<li>given I&#39;m on job invocation form</li>
+<li>when I choose the job to execute</li>
+<li>then I&#39;m given a list of providers that I have enabled and has a
+template available for the job</li>
+<li>and each provider allows to choose which template to use for this
+invocation (if more templates for the job and provider are available)</li>
+<li>and every template has input fields generated based on the input
+defined on the template (such as list of packages for install package job)</li>
+</ol>
+
+<p><strong>Fill in target for a job</strong></p>
+
+<ol>
+<li>when I&#39;m on job invocation form</li>
+<li>then I can specify the target of the job using the scoped search
+syntax</li>
+</ol>
+
+<p><strong>Fill in execution properties of the job</strong></p>
+
+<ol>
+<li>when I&#39;m on job invocation form</li>
+<li>I can override the default values for number of tries, retry
+interval, splay time, timeout, remote user... on per-template basis</li>
+</ol>
+
+<p><strong>Set the exeuction time into future</strong> (see <a href="design#scheduling">scheduling</a>
+  for more scenarios)</p>
+
+<ol>
+<li>when I&#39;m on a job invocation form</li>
+<li>then I can specify the time to start the execution at (now by
+default)</li>
+<li>and I can specify if the targeting should be calculated now or
+postponed to the execution time</li>
+</ol>
+
+<p><strong>Run a job from host detail</strong></p>
+
+<ol>
+<li>given I&#39;m on a host details page</li>
+<li>when I click &quot;Run remote command&quot;</li>
+<li>then a user dialog opens with job invocation form, with prefiled
+targeting pointing to this particular host</li>
+</ol>
+
+<p><strong>Run a job from host index</strong></p>
+
+<ol>
+<li>given I&#39;m on a host index page</li>
+<li>when I click &quot;Run remote command&quot;</li>
+<li>then a user dialog opens with job invocation form, with prefiled
+targeting using the same search that was used in the host index page</li>
+</ol>
+
+<p><strong>Invoke a job with single remote execution provider</strong></p>
+
+<ol>
+<li>given I have only one provider available in my installation</li>
+<li>and I&#39;m on job invocation form</li>
+<li>when I choose the job to execute</li>
+<li>then only the template for this provider is available to run and
+asking for user inputs</li>
+</ol>
+
+<p><strong>Invoke a job with hammer</strong></p>
+
+<ol>
+<li>given I&#39;m using CLI</li>
+<li>then I can run a job with ability to specify:
 
 <ul>
-<li><p>As a user to plan a command I want to: 
-input a job name
-select targets (based on bookmarks, explicit host selection, custom query)
-select job templates that can be used for this job name and targets (host is responsible to pick the one from the list)
-fill in inputs for the selected job templates</p></li>
-<li><p>As a user I want a link in host detail page to execute a job on displayed host which pre-fills the target in command invocation form</p></li>
-<li><p>As a user I want a link in host list page that redirects me to command invocation page where I can plan job execution for targets I saw on host list page</p></li>
-</ul>
+<li>targeting with scoped search</li>
+<li>job name to run</li>
+<li>templates to use for the job</li>
+<li>inputs on per-template basis</li>
+<li>execution properties on per-template basis</li>
+<li><code>start_at</code> value for execution in future</li>
+<li>whether to wait for the job or exit after invocation (--async option)</li>
+</ul></li>
+</ol>
+
+<p><strong>Re-invoke a job</strong></p>
+
+<ol>
+<li>given I&#39;m in job details page</li>
+<li>when I choose re-run</li>
+<li>then a user dialog opens with job invocation form, with prefiled
+targeting parameters from the previous execution
+1 and I can override all the values (including targeting, job,
+templates and inputs)</li>
+</ol>
+
+<p><strong>Edit a bookmark referenced by pending job invocation</strong></p>
+
+<ol>
+<li>given I have a pending execution task which targeting was created
+from a bookmark</li>
+<li>when I edit the bookmark</li>
+<li>then I should be notified about the existence of the pending tasks
+with ability to update the targeting (or cancel and recreate the invocation)</li>
+</ol>
 
 <h2 id="design">Design</h2>
 
 <p>Class diagram of Foreman classes</p>
 
-<p><img src='/foreman-rex///images/plantuml/c054b73ffa0504758ea4eb0c7dc8ca81.png'></p>
+<p><img src='/foreman-rex///images/plantuml/2911c81d093198df67454fae05026221.png'></p>
 
-<p>Query is copied to Target, we don&#39;t want to propagate any later
+<p>Query is copied to Targeting, we don&#39;t want to propagate any later
 changes to Bookmark to already planned job executions.</p>
 
 <p>We can store link to original bookmark to be able to
 compare changes later.</p>
 
-<p>For JobExecution we forbid later editing of Targeting.</p>
+<p>For JobInvocation we forbid later editing of Targeting.</p>
 
 <h1 id="command-execution">Command Execution</h1>
 
