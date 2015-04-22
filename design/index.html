@@ -378,6 +378,18 @@ of tries, retry interval, splay time, timeout, remote user...) when I plan an ex
 
 <h2 id="scenarios">Scenarios</h2>
 
+<p><strong>Fill in target for a job</strong></p>
+
+<ol>
+<li>when I&#39;m on job invocation form</li>
+<li>then I can specify the target of the job using the scoped search
+syntax</li>
+<li>the target might influence the list of providers available for the
+invocation: although, in delayed execution and dynamic targeting the
+current list of providers based on the hosts might not be final and
+we should count on that.</li>
+</ol>
+
 <p><strong>Fill in template inputs for a job</strong></p>
 
 <ol>
@@ -388,15 +400,20 @@ template available for the job</li>
 <li>and each provider allows to choose which template to use for this
 invocation (if more templates for the job and provider are available)</li>
 <li>and every template has input fields generated based on the input
-defined on the template (such as list of packages for install package job)</li>
+defined on the template (such as list of packages for install package
+job)
+<em>OPEN QUESTION</em>: should we unify the common inputs in all templates to
+specify them only once?</li>
 </ol>
 
-<p><strong>Fill in target for a job</strong></p>
+<p><strong>Fill in job description for the execution</strong></p>
 
 <ol>
-<li>when I&#39;m on job invocation form</li>
-<li>then I can specify the target of the job using the scoped search
-syntax</li>
+<li>given I&#39;m on job invocation form</li>
+<li>there should be a field for task description, that will be used for
+listing the jobs</li>
+<li>the description value should be pregenerated based on the job name
+and specified input (something like &quot;Package install: zsh&quot;)</li>
 </ol>
 
 <p><strong>Fill in execution properties of the job</strong></p>
@@ -404,7 +421,8 @@ syntax</li>
 <ol>
 <li>when I&#39;m on job invocation form</li>
 <li>I can override the default values for number of tries, retry
-interval, splay time, timeout, remote user... on per-template basis</li>
+interval, splay time, timeout, remote user...</li>
+<li>the overrides are common for all the templates</li>
 </ol>
 
 <p><strong>Set the exeuction time into future</strong> (see <a href="design#scheduling">scheduling</a>
@@ -453,13 +471,19 @@ asking for user inputs</li>
 <li>then I can run a job with ability to specify:
 
 <ul>
-<li>targeting with scoped search</li>
+<li>targeting with scoped search or bookmark_id</li>
 <li>job name to run</li>
 <li>templates to use for the job</li>
 <li>inputs on per-template basis</li>
-<li>execution properties on per-template basis</li>
+<li>execution properties as overrides for the defaults coming from the template</li>
 <li><code>start_at</code> value for execution in future</li>
-<li>whether to wait for the job or exit after invocation (--async option)</li>
+<li>in case of the start_at value, if the targeting should be static
+vs. dynamic</li>
+<li>whether to wait for the job or exit after invocation (--async
+option)
+<em>OPEN QUESTION</em>: should we unify the common inputs in all templates to
+specify them only once: not scoping  the input by template? Maybe an
+inputs catalog (with both defined name and semantic) might help.</li>
 </ul></li>
 </ol>
 
@@ -488,7 +512,7 @@ with ability to update the targeting (or cancel and recreate the invocation)</li
 
 <p>Class diagram of Foreman classes</p>
 
-<p><img src='/foreman-rex///images/plantuml/2911c81d093198df67454fae05026221.png'></p>
+<p><img src='/foreman-rex///images/plantuml/151c158cf5e99816811684f1f7af4add.png'></p>
 
 <p>Query is copied to Targeting, we don&#39;t want to propagate any later
 changes to Bookmark to already planned job executions.</p>
