@@ -344,15 +344,56 @@ this in mind</p>
 <h2 id="user-stories">User Stories</h2>
 
 <ul>
-<li><p>?As a user I want to be able to specify default number of tries per command. # Command preparation?</p></li>
-<li><p>?As a user I want to be able to specify default retry interval per command. # Command preparation?</p></li>
-<li><p>?As a user I want to be able to specify default splay time per command. # Command preparation?</p></li>
-<li><p>?As a user I want to setup default timeout per command. # Command preparation?</p></li>
+<li><p>As a user I want to be able to create a template to run some command for a given remote execution provider for a specific job</p></li>
+<li><p>As a user these command templates should be audited and versioned</p></li>
+<li><p>As a user I want to be able to define inputs into the template that consist of user input at execution time.  I should be able to use these inputs within my template.</p></li>
+<li><p>As a user I want to be able to define an input for a template that uses a particular fact about the host being executed on at execution time.</p></li>
+<li><p>As a user I want to be able to define an input for a template that uses a particular smart variable that is resolved at execution time.</p></li>
+<li><p>As a user I want to be able to define a description of each input in order to help describe the format and meaning of an input.</p></li>
+<li><p>As a user I want to be able to specify default number of tries per command template.</p></li>
+<li><p>As a user I want to be able to specify default retry interval per command template.</p></li>
+<li><p>As a user I want to be able to specify default splay time per command template.</p></li>
+<li><p>As a user I want to setup default timeout per command template.</p></li>
+<li><p>As a user I want to preview a rendered command template for a host (providing needed inputs)</p></li>
 </ul>
 
 <h2 id="design">Design</h2>
 
-<p><img src='/foreman-rex///images/plantuml/be93da05489725928bf0366658baadb6.png'></p>
+<p><img src='/foreman-rex///images/plantuml/1b3c153aa58dd2c5b70603ae29268b42.png'></p>
+
+<h2 id="scenarios">Scenarios</h2>
+
+<p><strong>Creating a command template</strong></p>
+
+<ol>
+<li>given I&#39;m on new template form</li>
+<li>I select from a list of existing job names or fill in a new job name</li>
+<li>I select some option to add an input
+
+<ol>
+<li>Give the input a name</li>
+<li>Select the type &#39;user input&#39;</li>
+<li>Give the input a description (space separated package list)</li>
+</ol></li>
+<li>I select from a list of known providers (ssh, mco, salt, ansible)</li>
+<li>I am shown an example of how to use the input in the template</li>
+<li>I am able to see some simple example for the selected provider??</li>
+<li>I fill in the template</li>
+<li>I select one or more organizations and locations (if enabled)</li>
+<li>I click save</li>
+</ol>
+
+<p><strong>Creating a smart variable based input</strong></p>
+
+<ol>
+<li>given i am creating or editing a command template</li>
+<li>I select to add a new input
+
+<ol>
+<li>Give the input a name</li>
+<li>Define a smart variable name</li>
+</ol></li>
+</ol>
 
 <h1 id="command-invocation">Command Invocation</h1>
 
@@ -374,6 +415,8 @@ search criteria should be evaluated now or on the execution time</p></li>
 warning with the info about unreachable hosts</p></li>
 <li><p>As a user I want to be able to override default values like (number
 of tries, retry interval, splay time, timeout, remote user...) when I plan an execution of command.</p></li>
+<li><p>As a user I expect to see a the description of an input whenever i am being requested to
+provide the value for the input.</p></li>
 </ul>
 
 <h2 id="scenarios">Scenarios</h2>
@@ -425,7 +468,7 @@ interval, splay time, timeout, remote user...</li>
 <li>the overrides are common for all the templates</li>
 </ol>
 
-<p><strong>Set the exeuction time into future</strong> (see <a href="design#scheduling">scheduling</a>
+<p><strong>Set the execution time into future</strong> (see <a href="design#scheduling">scheduling</a>
   for more scenarios)</p>
 
 <ol>
@@ -441,7 +484,7 @@ postponed to the execution time</li>
 <ol>
 <li>given I&#39;m on a host details page</li>
 <li>when I click &quot;Run remote command&quot;</li>
-<li>then a user dialog opens with job invocation form, with prefiled
+<li>then a user dialog opens with job invocation form, with pre-filled
 targeting pointing to this particular host</li>
 </ol>
 
@@ -512,7 +555,7 @@ with ability to update the targeting (or cancel and recreate the invocation)</li
 
 <p>Class diagram of Foreman classes</p>
 
-<p><img src='/foreman-rex///images/plantuml/151c158cf5e99816811684f1f7af4add.png'></p>
+<p><img src='/foreman-rex///images/plantuml/92f06afd5a5fce9b76f46d0f2a4301c8.png'></p>
 
 <p>Query is copied to Targeting, we don&#39;t want to propagate any later
 changes to Bookmark to already planned job executions.</p>
@@ -547,6 +590,16 @@ retrying on failure, timeouts)</p>
 <p>We should take facts from Foreman rather gather them during runtime (different result than expected when planning, performance)</p>
 
 <h2 id="open-questions">Open questions</h2>
+
+<ol>
+<li>Splay Time versus Splay Count
+
+<ul>
+<li>Count would allow for better adjustments for performance tolerance</li>
+<li>Time would fit into maintenance windows better</li>
+<li>How would either of these be implemented?</li>
+</ul></li>
+</ol>
 
 <h1 id="reporting">Reporting</h1>
 
