@@ -417,6 +417,8 @@ warning with the info about unreachable hosts</p></li>
 of tries, retry interval, splay time, timeout, remote user...) when I plan an execution of command.</p></li>
 <li><p>As a user I expect to see a the description of an input whenever i am being requested to
 provide the value for the input.</p></li>
+<li><p>As a user I want to be able to re-invoke the jobs based on
+success/failure of previous task</p></li>
 </ul>
 
 <h2 id="scenarios">Scenarios</h2>
@@ -541,6 +543,19 @@ targeting parameters from the previous execution
 templates and inputs)</li>
 </ol>
 
+<p><strong>Re-invoke a job for failed hosts</strong></p>
+
+<ol>
+<li>given I&#39;m in job details page</li>
+<li>when I choose re-run</li>
+<li>then a user dialog opens with job invocation form, with prefiled
+targeting parameters from the previous execution
+1 and I can override all the values (including targeting, job,
+templates and inputs)</li>
+<li>I can choose in the targeting to only run on hosts that failed with
+the job previously</li>
+</ol>
+
 <p><strong>Edit a bookmark referenced by pending job invocation</strong></p>
 
 <ol>
@@ -548,7 +563,8 @@ templates and inputs)</li>
 from a bookmark</li>
 <li>when I edit the bookmark</li>
 <li>then I should be notified about the existence of the pending tasks
-with ability to update the targeting (or cancel and recreate the invocation)</li>
+with ability to update the targeting (or cancel and recreate the
+invocation)</li>
 </ol>
 
 <h2 id="design">Design</h2>
@@ -571,21 +587,68 @@ compare changes later.</p>
 
 <ul>
 <li><p>As a user I want to be able to cancel command which hasn&#39;t been started yet.</p></li>
-<li><p>As a user I want to be able to cancel command which is in progress. # some providers might not support this? therefore next user stories</p></li>
-<li><p>As a developer I want to specify whether cancellation of running commands is possible.</p></li>
-<li><p>As a user I want to see if I&#39;m able to cancel the command.</p></li>
+<li><p>As a user I want to be able to cancel command which is in progress
+(if supported by specific provider…)</p></li>
 <li><p>As a user I want job execution to fail after timeout limit.</p></li>
+<li><p>As a user I want to job execution to be re-tried
+based on the tries and retry interval values given in the invocation</p></li>
+<li><p>As a user I want to job execution on multiple hosts to be spread
+using the splay value</p></li>
+<li><p>As a user I want the job execution to be performed as a user that
+was specified on the job invocation</p></li>
+<li><p>As a user I want an ability to retry the job execution when the host
+checks in (support of hosts that are offline by the time the
+execution).</p></li>
 </ul>
+
+<h2 id="scenarios">Scenarios</h2>
+
+<p>** Cancel pending bulk task: all at once**</p>
+
+<ol>
+<li>given I&#39;ve set a job to run in future on multiple hosts</li>
+<li>when I click &#39;cancel&#39; on the corresponding bulk task</li>
+<li>then the whole task should be canceled (including all the sub-tasks
+on all the hosts)</li>
+</ol>
+
+<p>** Cancel pending bulk task: task on specific host **</p>
+
+<ol>
+<li>given I&#39;ve set a job to run in future on multiple hosts</li>
+<li>when I show the task representation on a host details page</li>
+<li>when I click &#39;cancel&#39; on the task</li>
+<li>then I should be offered whether I should cancel just this
+instance or the whole bulk task on all hosts</li>
+</ol>
+
+<p>** Fail after timeout **</p>
+
+<ol>
+<li>given I&#39;ve invoked a job</li>
+<li>when the job fails to start in given specified timeout</li>
+<li>then the job should be marked as failed due to timeout</li>
+</ol>
+
+<p>** Retried task **</p>
+
+<ol>
+<li>given I&#39;ve invoked a job</li>
+<li>when the job fails to start at first attemt</li>
+<li>then the executor should wait for retry_timeout period</li>
+<li>and it should reiterate with the attempt based on the tries number</li>
+<li>and I should see the information about the number of retries</li>
+</ol>
 
 <h2 id="design">Design</h2>
 
-<p>Class diagram of Foreman classes</p>
+<p>Class diagram for jobs running on multiple hosts</p>
 
-<p><img src='/foreman-rex///images/plantuml/f2f65926bbdde9e1e80d44ee633ed98d.png'></p>
+<p><img src='/foreman-rex///images/plantuml/f90e4db6e7f787dd9833be86854125a3.png'></p>
 
-<p>JobExecution will be probably later replaced by Scheduler that
-will schedule ProxyCommands (could be responsible for batch jobs,
-retrying on failure, timeouts)</p>
+<p>Class diagram for jobs running a single host</p>
+
+<p><img src='/foreman-rex///images/plantuml/b5775ac7d4be15c8d1d4dc916c57b1fc.png'></p>
 
 <p>We should take facts from Foreman rather gather them during runtime (different result than expected when planning, performance)</p>
 
