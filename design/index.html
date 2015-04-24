@@ -357,10 +357,6 @@ this in mind</p>
 <li><p>As a user I want to preview a rendered command template for a host (providing needed inputs)</p></li>
 </ul>
 
-<h2 id="design">Design</h2>
-
-<p><img src='/foreman-rex///images/plantuml/1b3c153aa58dd2c5b70603ae29268b42.png'></p>
-
 <h2 id="scenarios">Scenarios</h2>
 
 <p><strong>Creating a command template</strong></p>
@@ -394,6 +390,10 @@ this in mind</p>
 <li>Define a smart variable name</li>
 </ol></li>
 </ol>
+
+<h2 id="design">Design</h2>
+
+<p><img src='/foreman-rex///images/plantuml/1b3c153aa58dd2c5b70603ae29268b42.png'></p>
 
 <h1 id="command-invocation">Command Invocation</h1>
 
@@ -446,9 +446,7 @@ template available for the job</li>
 invocation (if more templates for the job and provider are available)</li>
 <li>and every template has input fields generated based on the input
 defined on the template (such as list of packages for install package
-job)
-<em>OPEN QUESTION</em>: should we unify the common inputs in all templates to
-specify them only once?</li>
+job)</li>
 </ol>
 
 <p><strong>Fill in job description for the execution</strong></p>
@@ -525,10 +523,7 @@ asking for user inputs</li>
 <li>in case of the start_at value, if the targeting should be static
 vs. dynamic</li>
 <li>whether to wait for the job or exit after invocation (--async
-option)
-<em>OPEN QUESTION</em>: should we unify the common inputs in all templates to
-specify them only once: not scoping  the input by template? Maybe an
-inputs catalog (with both defined name and semantic) might help.</li>
+option)</li>
 </ul></li>
 </ol>
 
@@ -580,6 +575,15 @@ changes to Bookmark to already planned job executions.</p>
 compare changes later.</p>
 
 <p>For JobInvocation we forbid later editing of Targeting.</p>
+
+<h2 id="open-questions">Open questions</h2>
+
+<ul>
+<li><p>should we unify the common inputs in all templates to specify them
+only once or scoping the input by template?</p></li>
+<li><p>Maybe an inputs catalog (with both defined name and semantic) might
+help with keeping the inputs consistent across templates/providers</p></li>
+</ul>
 
 <h1 id="command-execution">Command Execution</h1>
 
