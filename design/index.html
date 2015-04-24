@@ -562,11 +562,27 @@ with ability to update the targeting (or cancel and recreate the
 invocation)</li>
 </ol>
 
+<p><strong>Email notification: opt in</strong></p>
+
+<ol>
+<li>given I haven&#39;t configured to send email notifications about my executions</li>
+<li>then the job invocation should have the &#39;send email notification&#39;
+turned off by default</li>
+</ol>
+
+<p><strong>Email notification: opt out</strong></p>
+
+<ol>
+<li>given I haven&#39;t configured to send email notifications about my executions</li>
+<li>then the job invocation should have the &#39;send email notification&#39;
+turned off by default</li>
+</ol>
+
 <h2 id="design">Design</h2>
 
 <p>Class diagram of Foreman classes</p>
 
-<p><img src='/foreman-rex///images/plantuml/92f06afd5a5fce9b76f46d0f2a4301c8.png'></p>
+<p><img src='/foreman-rex///images/plantuml/712ec401d83fa8795c9c1b0eae016aad.png'></p>
 
 <p>Query is copied to Targeting, we don&#39;t want to propagate any later
 changes to Bookmark to already planned job executions.</p>
@@ -648,7 +664,7 @@ instance or the whole bulk task on all hosts</li>
 
 <p>Class diagram for jobs running on multiple hosts</p>
 
-<p><img src='/foreman-rex///images/plantuml/da292996f3b3552d5def31282a728aa6.png'></p>
+<p><img src='/foreman-rex///images/plantuml/2b6d5b3236658251a0f37b3c5b1213b1.png'></p>
 
 <p>Class diagram for jobs running a single host</p>
 
@@ -672,7 +688,72 @@ instance or the whole bulk task on all hosts</li>
 
 <h2 id="user-stories">User Stories</h2>
 
+<ul>
+<li><p>As a user I would like to monitor the current state of the command
+running against a single host, including the output and exit status</p></li>
+<li><p>As a user I would like to monitor the status of bulk command,
+including the number of successful, failed and pending tasks</p></li>
+<li><p>As a user I would like to see the history of all commands run on a
+host</p></li>
+<li><p>As a user I would like to see the history of all tasks that I&#39;ve
+invoked</p></li>
+<li><p>As a user I would like to be able to  get an email notification with
+execution report</p></li>
+</ul>
+
+<h2 id="scenarios">Scenarios</h2>
+
+<p><strong>Track the job running on a set of hosts</strong></p>
+
+<ol>
+<li>given I&#39;ve set a job to run in future on multiple hosts</li>
+<li>then I can watch the progress of the job (number of
+successful/failed/pending tasks)</li>
+<li>and I can get to the list of jobs per host</li>
+<li>and I&#39;m able to filter on the host that it was run against and
+state</li>
+</ol>
+
+<p><strong>Track the job running on a single host</strong></p>
+
+<ol>
+<li>given I&#39;ve set a job to run on a specific host</li>
+<li>when I show the task representation page</li>
+<li>then I can watch the progress of the job (updated log), status</li>
+</ol>
+
+<p><strong>History of jobs run on a host</strong></p>
+
+<ol>
+<li>given I&#39;m on host jobs page</li>
+<li>when I can see all the jobs run against the host</li>
+<li>and I&#39;m able to filter on the host that it was run against and
+state, owner etc.</li>
+</ol>
+
+<p><strong>History of invoked jobs</strong></p>
+
+<ol>
+<li>given I&#39;m on jobs history page</li>
+<li>when I can see all the jobs invoked in the system</li>
+<li>scoped by a taxonomy</li>
+<li>and I&#39;m able to filter on the host that it was run against and
+state, owner etc.</li>
+</ol>
+
+<p><strong>Email notification: send after finish</strong></p>
+
+<ol>
+<li>given I&#39;ve invoked a job with email notification turned on</li>
+<li>when the job finishes</li>
+<li>then I should get the email with report from the job after it finishes</li>
+</ol>
+
 <h2 id="design">Design</h2>
+
+<p>Class diagram for jobs running on multiple hosts</p>
+
+<p><img src='/foreman-rex///images/plantuml/73ae8c3303bc976f248a36e0c9b0c9a1.png'></p>
 
 <h1 id="scheduling">Scheduling</h1>
 
