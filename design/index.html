@@ -759,7 +759,49 @@ state, owner etc.</li>
 
 <h2 id="user-stories">User Stories</h2>
 
+<ul>
+<li><p>As a user I want to be able go execute a job at future time</p></li>
+<li><p>As a user I want to set the job to reoccur with specified
+frequency</p></li>
+</ul>
+
+<h2 id="scenarios">Scenarios</h2>
+
+<p><strong>Job set for the future</strong></p>
+
+<ol>
+<li>given I&#39;ve invoked a job at future time</li>
+<li>when the time comes</li>
+<li>the job gets executed</li>
+</ol>
+
+<p><strong>Creating reoccurring job</strong></p>
+
+<ol>
+<li>given I&#39;m in job invocation form</li>
+<li>when I check &#39;reoccurring job&#39;</li>
+<li>then I can set the frequency and valid until date</li>
+</ol>
+
+<p><strong>Showing the tasks with reoccurring logic</strong></p>
+
+<ol>
+<li>when I list the jobs</li>
+<li>I can see the information about the reoccurring logic at every job</li>
+<li>and I can filter the jobs for those with the reoccurring logic</li>
+</ol>
+
+<p><strong>Canceling the reoccurring job</strong></p>
+
+<ol>
+<li>given I have reoccurring job configured</li>
+<li>when I cancel the next instance of the job</li>
+<li>then I&#39;m offered to cancel the reoccurring of the job in the future</li>
+</ol>
+
 <h2 id="design">Design</h2>
+
+<p><img src='/foreman-rex///images/plantuml/289ec5cf505c6dc6e58d4581aef813fe.png'></p>
 
 <h1 id="katello-workflow-integration">Katello Workflow Integration</h1>
 
