@@ -825,7 +825,106 @@ install/uninstall, package profile refresh)</li>
 
 <h2 id="user-stories">User Stories</h2>
 
+<ul>
+<li><p>As a user I want to be able to plan job invocation for any host that I
+can view (view_host permission).</p></li>
+<li><p>As a user I want to be able to plan a job invocation of job that I can 
+view (view_job permission)</p></li>
+<li><p>As a user I want to restrict other users which combination of host and job 
+name they can execute (execute permission on job_task resource).</p></li>
+<li><p>As a user I want to be warned if I planned job invocation on hosts on
+which the execution of this job is not allowed to me.</p></li>
+<li><p>As a user I want to see refused job invocations (based on permissions) as
+failed when they are executed.</p></li>
+<li><p>As a user I want to set limit filter with execute permission by host attributes
+such as hostgroup, environment, fqdn, id, lifecycle environment (if applicable), 
+content view (if applicable).</p></li>
+<li><p>As a user I want to specify remote_user for JobInvocation if at least one
+provider supports it.</p></li>
+<li><p>As a user I want to restrict other users to execute job under specific user
+as a part of filter condition. If the provider does not allow this, execution
+should be refused.</p></li>
+<li><p>As a job template provider I want to be able to specify default effective user</p></li>
+</ul>
+
+<h2 id="scenarios">Scenarios</h2>
+
+<p><strong>Allow user A to invoke package installation on host B</strong></p>
+
+<ol>
+<li>given  user A can view all hosts and job templates</li>
+<li>when he invoke package installation job on host B</li>
+<li>then his job task fails because he does not have execution 
+permission for such job task</li>
+</ol>
+
+<p><strong>Allow user A to run package installation on host B</strong></p>
+
+<ol>
+<li>given I&#39;ve permissions to assign other user permissions</li>
+<li>and user A can view all hosts and job templates</li>
+<li>when I grant user A execution permission on resource JobTask</li>
+<li>and I set related filter condition to &quot;host<em>name = B and job</em>name = package_install&quot;</li>
+<li>and user A invokes package install execution</li>
+<li>then the job gets executed successfully</li>
+</ol>
+
+<p><strong>User can set effective user</strong></p>
+
+<ol>
+<li>given the provider of job template supports changing effective user</li>
+<li>when user invokes a job</li>
+<li>then he can set effective user under which command is executed on target host </li>
+</ol>
+
+<h2 id="new-permissions-introduced">New permissions introduced</h2>
+
+<ul>
+<li>JobInvocation
+
+<ul>
+<li>Create</li>
+<li>View</li>
+<li>Cancel</li>
+<li>Edit (Schedule, never can change targetting)</li>
+</ul></li>
+<li>JobTask
+
+<ul>
+<li>Execute</li>
+<li>(filter can be: remote<em>user = &#39;joe&#39; and host</em>id = 1 or host<em>id = 2 and script</em>name = &#39;foobar&#39;)</li>
+</ul></li>
+</ul>
+
 <h2 id="design">Design</h2>
+
+<p><img src='/foreman-rex///images/plantuml/5b16920e4a2607dc9522f565bff6f455.png'></p>
+
+<h1 id="katello-client-utilities">Katello Client Utilities</h1>
+
+<h2 id="design">Design</h2>
+
+<p>katello-agent provides three main functions aside from remote management:</p>
+
+<ul>
+<li>package profile yum plugin - pushes a new package profile after any yum transaction
+
+<ul>
+<li>Split out into its own package (yum-plugin-katello-profile)</li>
+</ul></li>
+<li>enabled repository monitoring
+
+<ul>
+<li>monitors /etc/yum.repos.d/redhat.repo file for changes and sends newly enabled repos whenever it does change</li>
+<li>Split out into its own package (katello-errata-profile) with a service to do the same</li>
+</ul></li>
+<li>On the capsule, goferd runs to recieve commands to sync repositories, possible solutions:
+
+<ul>
+<li>katello-agent can remain (but possibly renamed), with a lot of the existing functionality removed</li>
+<li>pulp changes to a rest api method for initiating capsule syncs, katello needs to store some auth credentials per capsule</li>
+</ul></li>
+</ul>
 
 <h1 id="orchestration">Orchestration</h1>
 
