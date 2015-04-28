@@ -414,7 +414,7 @@ search criteria should be evaluated now or on the execution time</p></li>
 <li><p>As a user, when planning future job execution, I want to see a
 warning with the info about unreachable hosts</p></li>
 <li><p>As a user I want to be able to override default values like (number
-of tries, retry interval, splay time, timeout, remote user...) when I plan an execution of command.</p></li>
+of tries, retry interval, splay time, timeout, effective user...) when I plan an execution of command.</p></li>
 <li><p>As a user I expect to see a the description of an input whenever i am being requested to
 provide the value for the input.</p></li>
 <li><p>As a user I want to be able to re-invoke the jobs based on
@@ -464,7 +464,7 @@ and specified input (something like &quot;Package install: zsh&quot;)</li>
 <ol>
 <li>when I&#39;m on job invocation form</li>
 <li>I can override the default values for number of tries, retry
-interval, splay time, timeout, remote user...</li>
+interval, splay time, timeout, effective user...</li>
 <li>the overrides are common for all the templates</li>
 </ol>
 
@@ -582,7 +582,7 @@ turned off by default</li>
 
 <p>Class diagram of Foreman classes</p>
 
-<p><img src='/foreman-rex///images/plantuml/712ec401d83fa8795c9c1b0eae016aad.png'></p>
+<p><img src='/foreman-rex///images/plantuml/cf5dfb9db2c8a84071e0615e4aa6a17f.png'></p>
 
 <p>Query is copied to Targeting, we don&#39;t want to propagate any later
 changes to Bookmark to already planned job executions.</p>
@@ -839,7 +839,7 @@ failed when they are executed.</p></li>
 <li><p>As a user I want to set limit filter with execute permission by host attributes
 such as hostgroup, environment, fqdn, id, lifecycle environment (if applicable), 
 content view (if applicable).</p></li>
-<li><p>As a user I want to specify remote_user for JobInvocation if at least one
+<li><p>As a user I want to specify effective_user for JobInvocation if at least one
 provider supports it.</p></li>
 <li><p>As a user I want to restrict other users to execute job under specific user
 as a part of filter condition. If the provider does not allow this, execution
@@ -863,10 +863,12 @@ permission for such job task</li>
 <ol>
 <li>given I&#39;ve permissions to assign other user permissions</li>
 <li>and user A can view all hosts and job templates</li>
+<li>and user A can create job invocations</li>
 <li>when I grant user A execution permission on resource JobTask</li>
 <li>and I set related filter condition to &quot;host<em>name = B and job</em>name = package_install&quot;</li>
-<li>and user A invokes package install execution</li>
-<li>then the job gets executed successfully</li>
+<li>and user A invokes package install execution on hosts B and C</li>
+<li>then the job gets executed successfully on host B</li>
+<li>and job execution will fail on host C</li>
 </ol>
 
 <p><strong>User can set effective user</strong></p>
@@ -874,7 +876,19 @@ permission for such job task</li>
 <ol>
 <li>given the provider of job template supports changing effective user</li>
 <li>when user invokes a job</li>
-<li>then he can set effective user under which command is executed on target host </li>
+<li>then he can set effective user under which command is executed on target host</li>
+</ol>
+
+<p><strong>User can disallow running command as different effective user</strong></p>
+
+<ol>
+<li>given I&#39;ve permissions to assign other user permissions</li>
+<li>and user A can view all hosts and job templates</li>
+<li>and user A can create job invocations</li>
+<li>when I grant user A execution permission on resource JobTask</li>
+<li>and I set related filter condition to &quot;effective<em>user = user</em>a&quot;</li>
+<li>and user A invokes job execution with effective user set to different user (e.g. root)</li>
+<li>then the job execution fails</li>
 </ol>
 
 <h2 id="new-permissions-introduced">New permissions introduced</h2>
@@ -892,13 +906,13 @@ permission for such job task</li>
 
 <ul>
 <li>Execute</li>
-<li>(filter can be: remote<em>user = &#39;joe&#39; and host</em>id = 1 or host<em>id = 2 and script</em>name = &#39;foobar&#39;)</li>
+<li>(filter can be: effective<em>user = &#39;joe&#39; and host</em>id = 1 or host<em>id = 2 and script</em>name = &#39;foobar&#39;)</li>
 </ul></li>
 </ul>
 
 <h2 id="design">Design</h2>
 
-<p><img src='/foreman-rex///images/plantuml/5b16920e4a2607dc9522f565bff6f455.png'></p>
+<p><img src='/foreman-rex///images/plantuml/c3f37e9cedeb193116d385903ac5f4ec.png'></p>
 
 <h1 id="katello-client-utilities">Katello Client Utilities</h1>
 
