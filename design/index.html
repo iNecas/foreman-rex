@@ -803,12 +803,13 @@ frequency</p></li>
 
 <p><img src='/foreman-rex///images/plantuml/289ec5cf505c6dc6e58d4581aef813fe.png'></p>
 
-<h1 id="foreman-integration">Foreman Integration</h1>
+<h1 id="developer-api">Developer API</h1>
 
 <h2 id="user-stories">User Stories</h2>
 
 <ul>
-<li>As a user, I want to be able to use for:
+<li>As a Foreman developer, I want to be able to use remote execution
+plugin to help with other Foreman features such as:
 
 <ul>
 <li>puppet run</li>
@@ -816,10 +817,98 @@ frequency</p></li>
 <li>content actions (package install/update/remove/downgrade, group
 install/uninstall, package profile refresh)</li>
 <li>subscription actions (refresh)</li>
+<li>OpenSCAP content update</li>
 </ul></li>
 </ul>
 
+<h2 id="scenarios">Scenarios</h2>
+
+<p><strong>Defining a predefined job without provided inputs</strong></p>
+
+<ol>
+<li>given I&#39;m a Foreman developer</li>
+<li>and I want to expose &#39;puppet run&#39; feature to the user</li>
+<li>then define the &#39;Puppet Run&#39; as predefined job in the code</li>
+<li>and specify the default job name to be used for the mapping</li>
+</ol>
+
+<p><strong>Defining a predefined job with provided inputs</strong></p>
+
+<ol>
+<li>given I&#39;m a Katello developer</li>
+<li>and I want to expose &#39;package install&#39; feature to the user</li>
+<li>then I define the &#39;Package Install&#39; predefined job with list of
+packages as provided input in the code</li>
+<li>and I specify default job name to be used for the mapping</li>
+<li>and I specify default mapping of the provided inputs to template
+inputs</li>
+</ol>
+
+<p><strong>Preseeding the predefined jobs</strong></p>
+
+<ol>
+<li>given I&#39;ve defined the &#39;Package Install&#39; predefined job</li>
+<li>when the seed script is run as part of the Foreman installation</li>
+<li>the systems tries to create the default mapping from the predefined job to
+the existing templates based on the developer-provided defaults</li>
+</ol>
+
+<p><strong>Configuring the predefined jobs mapping</strong></p>
+
+<ol>
+<li>given I&#39;m the administrator of the Foreman instance</li>
+<li>then I can see all the predefined jobs mapping</li>
+<li>when I edit existing mapping</li>
+<li>then I can choose job name, template and provided input -&gt; template
+inputs mapping</li>
+</ol>
+
+<p><strong>Configuring the predefined jobs mapping with organizations</strong></p>
+
+<ol>
+<li>given I&#39;m the administrator of the Foreman instance</li>
+<li>then I can scope the mapping of the predefined job to a specific
+organization</li>
+<li>and the system doesn&#39;t let me to create two mappings for the same
+predefined job and provider visible in one organization</li>
+</ol>
+
+<p><strong>Using the predefined jobs without provided inputs</strong></p>
+
+<ol>
+<li>given I&#39;m a Foreman user</li>
+<li>when I&#39;m on host details page</li>
+<li>and I press &#39;Puppet Run&#39;</li>
+<li>the job is invoked on the host based on the predefined mapping</li>
+</ol>
+
+<p><strong>Using the predefined jobs with provided inputs</strong></p>
+
+<ol>
+<li>given I&#39;m a Katello user</li>
+<li>when I&#39;m on host applicable errata list</li>
+<li>and I select a set of errata to install on the host</li>
+<li>and I click &#39;Install errata&#39;</li>
+<li>the job will be invoked to install the packages belonging to this
+errata</li>
+</ol>
+
+<p><strong>Using the predefined jobs with customization</strong></p>
+
+<ol>
+<li>given I&#39;m a Katello user</li>
+<li>when I&#39;m on host applicable errata list</li>
+<li>and I select a set of errata to install on the host</li>
+<li>and I click &#39;Install errata (customize)&#39;</li>
+<li>then the job invocation form will be opened with pre-filled values
+based on the mapping</li>
+<li>and I can update the values, including setting the start_at time or
+reoccurring logic</li>
+</ol>
+
 <h2 id="design">Design</h2>
+
+<p><img src='/foreman-rex///images/plantuml/921cfd5e27136bc11a05da16d87ec5e1.png'></p>
 
 <h1 id="security">Security</h1>
 
