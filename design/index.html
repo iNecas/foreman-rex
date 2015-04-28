@@ -1033,7 +1033,28 @@ permission for such job task</li>
 
 <h2 id="user-stories">User Stories</h2>
 
+<ul>
+<li><p>As a user I want to group a number of jobs together and treat them
+as an executable unit. (i.e. run this script to stop the app, install
+these errata, reboot the system)</p></li>
+<li><p>As a user I want to run a set of jobs in a rolling fashion.
+(i.e.,patch server 1, reboot it, if it succeeds, proceed to server 2
+&amp; repeat. Otherwise raise exception)</p></li>
+<li><p>As a user I want to define a rollback job in case the execution
+fails</p></li>
+<li><p>As a sysadmin I would like to orchestrate several actions across a
+collection of machines. (e.g. install a DB on this machine, and pass
+the ip address into an install of a web server on another machine)</p></li>
+</ul>
+
 <h2 id="design">Design</h2>
+
+<ul>
+<li><p>TBD after the simple support is implemented, possible cooperation with
+multi-host deployments feature</p></li>
+<li><p>Some of the features might be solved by advanced remote execution
+technology integration (such as ansible playbook)</p></li>
+</ul>
 
         </div>
       </div>
